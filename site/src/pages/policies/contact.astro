@@ -1,0 +1,11 @@
+---
+import Policy from '../../layouts/Policy.astro';
+import { BRAND } from '@kw/shared/brand';
+---
+
+<Policy title="Contact" description="How to reach us about an order or a piece.">
+  <p>Email is the fastest way: <a href={`mailto:${BRAND.seller.email}`}>{BRAND.seller.email}</a>. We reply within one business day.</p>
+  <p>Please include your order number (from your Stripe receipt) for anything order-related, and photographs for any condition question.</p>
+  <p>{BRAND.name} is an independent seller based in {BRAND.seller.city}, {BRAND.seller.state}. Postal notices: {BRAND.seller.mailingAddress}.</p>
+  <p>Instagram: <a href={`https://www.instagram.com/${BRAND.social.instagram}`} rel="noopener">@{BRAND.social.instagram}</a></p>
+</Policy>

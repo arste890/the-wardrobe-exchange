@@ -1,0 +1,49 @@
+---
+import Policy from '../../layouts/Policy.astro';
+import { MEASUREMENT_FIELDS, CATEGORY_LABELS } from '@kw/shared/types';
+import type { Category } from '@kw/shared/types';
+
+const cats = Object.keys(MEASUREMENT_FIELDS) as Category[];
+const HINTS: Record<string, string> = {
+  chest: 'straight across, 2–3 cm below the armholes, seam to seam',
+  shoulder: 'across the back from shoulder seam to shoulder seam',
+  sleeve: 'from the shoulder seam to the end of the cuff',
+  length: 'from the highest point of the collar/neckline straight down to the hem',
+  waist: 'straight across the top of the waistband (double it for circumference)',
+  hips: 'across the widest point of the hip, roughly 20 cm below the waist',
+  rise: 'from the crotch seam up to the top of the waistband at the front',
+  inseam: 'from the crotch seam down the inside of the leg to the hem',
+  leg_opening: 'straight across the hem of one leg',
+  insole: 'inside the shoe, heel to toe — compare with your foot length plus ~1 cm',
+  heel: 'from the floor to where the heel meets the upper',
+  width: 'at the widest point',
+  height: 'from the base to the top edge, excluding handles',
+  depth: 'front to back at the base',
+  strap_drop: 'from the top of the strap to the top edge of the bag',
+};
+---
+
+<Policy title="Size Guide" description="How we measure, and how to compare with a garment you already own.">
+  <h2>The one rule</h2>
+  <p>Size labels are a starting point, not the whole story: a size 8 from 1998 and a size 8 from last season can differ by inches. Where a listing includes flat measurements, lay a garment you love flat on a table, measure the same points, and compare. Where it doesn't, email us and we will measure any point you need before you buy.</p>
+
+  <h2>How measurements are taken</h2>
+  <p>Garment laid flat, buttoned or zipped, gently smoothed but not stretched. Tape held straight. Tolerance ±1 cm (about ⅜ in). Chest, waist and hip figures are single-side flat measurements — double them for the full circumference.</p>
+  {
+    cats.map((c) => (
+      <>
+        <h3>{CATEGORY_LABELS[c]}</h3>
+        <ul>
+          {MEASUREMENT_FIELDS[c].map((f) => (
+            <li>
+              <strong>{f.label}</strong> — {HINTS[f.key] ?? 'measured flat'}
+            </li>
+          ))}
+        </ul>
+      </>
+    ))
+  }
+
+  <h2>Fit notes</h2>
+  <p>Where a piece runs noticeably small or large for its label, the listing says so. If you are between measurements, email us with yours and we will tell you honestly.</p>
+</Policy>

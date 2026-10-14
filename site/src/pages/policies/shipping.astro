@@ -1,0 +1,36 @@
+---
+import Policy from '../../layouts/Policy.astro';
+import { BRAND } from '@kw/shared/brand';
+import { SHIPPING_CLASSES, SHIPPING_SERVICE, SHIPPING_DAYS, HANDLING, SIGNATURE_THRESHOLD_CENTS, formatUSD } from '@kw/shared/shipping';
+---
+
+<Policy title="Shipping Policy" description="Flat-rate tracked shipping within the US, usually dispatched within a few business days.">
+  <h2>Where we ship</h2>
+  <p>United States addresses only, including PO boxes. We do not ship internationally at this time.</p>
+
+  <h2>Rates</h2>
+  <p>Shipping is a flat rate based on the type of item, shown on every listing and added at checkout. You pay shipping; sales tax may apply to it where required.</p>
+  <table>
+    <thead><tr><th>Item type</th><th>Examples</th><th>Rate</th></tr></thead>
+    <tbody>
+      {Object.values(SHIPPING_CLASSES).map((c) => (<tr><td>{c.label}</td><td>{c.examples}</td><td>{formatUSD(c.cents)}</td></tr>))}
+    </tbody>
+  </table>
+
+  <h2>Dispatch and delivery</h2>
+  <ul>
+    <li>Orders usually ship within <strong>{HANDLING.min}–{HANDLING.max} business days</strong> (Monday–Friday, excluding US holidays) via {SHIPPING_SERVICE}. This is an estimate, not a guarantee; if we expect a longer delay we will email you.</li>
+    <li>Typical transit is {SHIPPING_DAYS.min}–{SHIPPING_DAYS.max} business days. Carrier delays are outside our control and are not grounds for a refund.</li>
+    <li>You receive an email with tracking the moment the label is scanned.</li>
+    <li>Orders of {formatUSD(SIGNATURE_THRESHOLD_CENTS)} or more are sent with signature confirmation.</li>
+  </ul>
+
+  <h2>Your address</h2>
+  <p>Please check the address you enter at checkout. If a package is returned to us as undeliverable because of an address error, we will contact you; re-shipping is at your cost.</p>
+
+  <h2>Lost or damaged in transit</h2>
+  <p>If tracking shows no movement for 7 days after dispatch, or the package arrives damaged, email <a href={`mailto:${BRAND.seller.email}`}>{BRAND.seller.email}</a> with photos within 3 days so we can open a carrier claim. Every package is insured for its purchase price; once the carrier claim is resolved we refund or, where possible, replace. Packages marked "delivered" by the carrier are considered received (see Terms of Sale, section 7).</p>
+
+  <h2>Packaging</h2>
+  <p>Pieces are steamed, folded in tissue and shipped in rigid mailers or boxes. We reuse clean packaging where we can.</p>
+</Policy>

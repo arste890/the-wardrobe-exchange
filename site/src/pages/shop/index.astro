@@ -1,0 +1,32 @@
+---
+import Base from '../../layouts/Base.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import ShopControls from '../../components/ShopControls.astro';
+import { fetchCatalog } from '../../lib/api';
+import type { Category } from '@kw/shared/types';
+
+const catalog = await fetchCatalog();
+const items = catalog.items.filter((i) => i.status !== 'draft' && i.status !== 'archived');
+const brands = [...new Set(items.map((i) => i.brand))].sort((a, b) => a.localeCompare(b));
+const sizes = [...new Set(items.map((i) => i.size_label))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
+const categories = [...new Set(items.map((i) => i.category))] as Category[];
+---
+
+<Base title="Shop" description="Every available piece. One of each — filter by category, size, brand or price.">
+  <section class="section">
+    <div class="wrap">
+      <h1>Shop</h1>
+      <ShopControls brands={brands} sizes={sizes} categories={categories} />
+      <div class="grid shop-grid" data-shop-grid>
+        {items.map((i, n) => <ProductCard item={i} eager={n < 4} />)}
+      </div>
+      <p class="muted" data-shop-empty hidden>Nothing matches those filters yet. Try widening them, or <a href="?">clear all</a>.</p>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .shop-grid [hidden] {
+    display: none;
+  }
+</style>

@@ -1,0 +1,62 @@
+---
+import type { CatalogItem } from '@kw/shared/types';
+import { CONDITION_LABELS, CONDITION_DESCRIPTIONS } from '@kw/shared/types';
+import { url } from '../lib/api';
+
+interface Props {
+  item: CatalogItem;
+}
+const { item } = Astro.props;
+const flawPhotos = new Map(item.photos.filter((p) => p.kind === 'flaw').map((p) => [p.id, p]));
+---
+
+<section class="condition">
+  <h2>Condition</h2>
+  <p><strong>{CONDITION_LABELS[item.condition_grade]}.</strong> {CONDITION_DESCRIPTIONS[item.condition_grade]}</p>
+  {item.condition_notes && <p>{item.condition_notes}</p>}
+  {
+    item.flaws.length > 0 ? (
+      <>
+        <h3 class="small eyebrow">Flaws, honestly</h3>
+        <ul class="condition__flaws">
+          {item.flaws.map((f) => {
+            const p = f.photo_id ? flawPhotos.get(f.photo_id) : undefined;
+            return (
+              <li>
+                {p && <img src={p.small} width="64" height="80" alt={p.alt || 'Flaw detail'} loading="lazy" />}
+                <span>{f.text}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </>
+    ) : (
+      <p class="muted">No flaws to note. Any wear would be listed and photographed here.</p>
+    )
+  }
+  <p class="small muted">
+    Pre-owned pieces are sold as described and photographed. Read our <a href={url('/policies/photos')}>condition grades</a>.
+  </p>
+</section>
+
+<style>
+  .condition__flaws {
+    list-style: none;
+    margin: 0 0 var(--space-4);
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+  .condition__flaws li {
+    display: flex;
+    gap: var(--space-3);
+    align-items: center;
+  }
+  .condition__flaws img {
+    width: 64px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: var(--radius);
+    flex: none;
+  }
+</style>

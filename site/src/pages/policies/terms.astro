@@ -1,0 +1,52 @@
+---
+import Policy from '../../layouts/Policy.astro';
+import { BRAND } from '@kw/shared/brand';
+import { HANDLING_TEXT, SIGNATURE_THRESHOLD_CENTS, formatUSD } from '@kw/shared/shipping';
+import { url } from '../../lib/api';
+---
+
+<Policy title="Terms of Sale" description="All sales are final. Read how we sell pre-owned pieces, what happens if something is not as described, and how disputes are handled.">
+  <p class="callout callout--strong"><strong>ALL SALES ARE FINAL — NO RETURNS, NO REFUNDS, NO EXCHANGES.</strong> The only exception is an item that arrives materially different from its listing (section 5). You must accept these terms before checkout and again on the Stripe payment page.</p>
+
+  <h2>1. Who you are buying from</h2>
+  <p>{BRAND.name} is operated by an individual seller based in {BRAND.seller.city}, {BRAND.seller.state} ("we", "us"). We are not a brand, boutique or authorised retailer of any label we sell. Brand names, logos and model names appear only to identify the pre-owned garments being offered; we are not affiliated with, sponsored by or endorsed by any of those brands.</p>
+  <p>Contact: <a href={`mailto:${BRAND.seller.email}`}>{BRAND.seller.email}</a> · Notices by post: {BRAND.seller.mailingAddress}.</p>
+
+  <h2>2. What we sell</h2>
+  <p>Every piece is pre-owned (unless marked "New with tags") and one of a kind. Each listing describes the item's condition grade, any flaws we found, the size on the label (and flat measurements where we provide them) and photographs of the actual garment. Pieces are sold <em>as described and photographed</em>. Please read the whole listing, including the <a href={url('/policies/photos')}>Photo &amp; Condition Disclaimer</a>, before buying.</p>
+
+  <h2>3. All sales are final</h2>
+  <p>Because each piece is unique and pre-owned, <strong>we do not accept returns and do not issue refunds or exchanges</strong> for reasons including, but not limited to: change of mind, fit, size, colour appearing different on your screen, wear that is disclosed in the listing, or late delivery by the carrier. This policy is disclosed before purchase on every product page, at checkout, and on the first line of your order confirmation, in accordance with Utah Administrative Code R152-11-10.</p>
+
+  <h2>4. Pricing, holds and availability</h2>
+  <ul>
+    <li>Prices are in US dollars. Shipping (flat rate by item type) and applicable sales tax are added at checkout before you pay.</li>
+    <li>Starting checkout places a 30-minute hold on the piece. If payment is not completed in that time the hold is released.</li>
+    <li>Pieces may also be offered on other marketplaces. If a piece sells elsewhere moments before your payment completes, your order is cancelled and refunded in full automatically. This is the only situation in which we cancel a paid order.</li>
+    <li>We may correct obvious listing errors (for example a mistyped price) before shipment; if we do, you may cancel for a full refund.</li>
+  </ul>
+
+  <h2>5. Not as described</h2>
+  <p>If an item arrives <strong>materially different from its listing</strong> — the wrong item, damage or flaws that were not disclosed, or an item that is not authentic — email us within <strong>{BRAND.notAsDescribedWindowDays} days of delivery</strong> with clear photographs. If we agree the item was not as described we will provide a prepaid return label and refund the full amount, including original shipping, once the item is received in the same condition it was sent. This remedy does not cover flaws that were disclosed in the listing, differences in fit, or colour variation between screens and daylight.</p>
+
+  <h2>6. Authenticity</h2>
+  <p>We sell only items we believe to be authentic, based on our own inspection of construction, labels, hardware and provenance. If a recognised authentication service determines an item is not authentic, we will refund the purchase price and shipping on its return. We do not otherwise guarantee authentication by any third party.</p>
+
+  <h2>7. Shipping and risk of loss</h2>
+  <p>We ship with tracking to US addresses only, {HANDLING_TEXT}; dispatch times are estimates, not a guarantee, and a later dispatch is not grounds for cancellation. Risk of loss passes to you when the carrier marks the package delivered to the address you provided; orders of {formatUSD(SIGNATURE_THRESHOLD_CENTS)} or more require a signature. See the <a href={url('/policies/shipping')}>Shipping Policy</a> for lost and damaged package procedures.</p>
+
+  <h2>8. Payment and chargebacks</h2>
+  <p>Payments are processed by Stripe. We never see or store your card details. Opening a chargeback instead of contacting us first for a situation covered by section 5 is a breach of these terms; we will provide Stripe with the listing, your acceptance of these terms, photographs and tracking evidence.</p>
+
+  <h2>9. Sales tax</h2>
+  <p>Sales tax is calculated and collected at checkout where we are required to collect it. You are responsible for any other taxes that may apply in your jurisdiction.</p>
+
+  <h2>10. Limitation of liability</h2>
+  <p>To the fullest extent permitted by law, our total liability for any claim relating to a purchase is limited to the amount you paid for that purchase. Nothing in these terms limits rights that cannot be limited under applicable law.</p>
+
+  <h2>11. Governing law</h2>
+  <p>These terms are governed by the laws of the State of Utah. Any dispute will be brought in the state or federal courts located in Utah, except that either party may bring an eligible claim in small claims court.</p>
+
+  <h2>12. Changes</h2>
+  <p>We may update these terms. The version in force for your order is the one shown at checkout; its version number is stored with your order. Current version: {BRAND.policyVersion}.</p>
+</Policy>

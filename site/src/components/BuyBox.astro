@@ -1,0 +1,134 @@
+---
+import type { CatalogItem } from '@kw/shared/types';
+import { CONDITION_LABELS } from '@kw/shared/types';
+import { BRAND } from '@kw/shared/brand';
+import { HANDLING_TEXT, SHIPPING_SERVICE } from '@kw/shared/shipping';
+import { formatUSD } from '../lib/format';
+import { url, API_URL } from '../lib/api';
+
+interface Props {
+  item: CatalogItem;
+}
+const { item } = Astro.props;
+const sold = item.status === 'sold';
+---
+
+<div class="buybox" data-buybox data-item-id={item.id} data-slug={item.slug} data-api={API_URL} data-policy-version={BRAND.policyVersion} data-initial-status={item.status}>
+  <p class="eyebrow">{item.brand}</p>
+  <h1 class="buybox__title">{item.title}</h1>
+  <p class="buybox__price">
+    <span class="price" data-price>{formatUSD(item.price_cents)}</span>
+    {item.original_price_cents && item.original_price_cents > item.price_cents && (
+      <span class="price--was">{formatUSD(item.original_price_cents)} retail</span>
+    )}
+  </p>
+  <dl class="buybox__facts">
+    <div><dt>Size</dt><dd>{item.size_label}{item.size_system ? ` (${item.size_system})` : ''}</dd></div>
+    <div><dt>Condition</dt><dd>{CONDITION_LABELS[item.condition_grade]}</dd></div>
+    {item.color && <div><dt>Color</dt><dd>{item.color}</dd></div>}
+    {item.material && <div><dt>Material</dt><dd>{item.material}</dd></div>}
+    <div><dt>Shipping</dt><dd>{formatUSD(item.shipping_cents)} · {SHIPPING_SERVICE}</dd></div>
+  </dl>
+
+  <div class="buybox__status" data-status-line>
+    {sold ? <span class="badge badge--sold">Sold</span> : <span class="badge badge--ok">1 available · one of a kind</span>}
+  </div>
+
+  <form class="buybox__form" data-buy-form hidden={sold}>
+    <label class="buybox__ack">
+      <input type="checkbox" name="ack" required data-ack />
+      <span>
+        I have read and agree to the <a href={url('/policies/terms')} target="_blank">Terms of Sale</a>, including that{' '}
+        <strong>ALL SALES ARE FINAL</strong> (no returns, refunds or exchanges except items not as described), and the{' '}
+        <a href={url('/policies/photos')} target="_blank">Photo &amp; Condition Disclaimer</a>.
+      </span>
+    </label>
+    <button class="btn btn--block" type="submit" data-buy-btn disabled>Buy now — secure checkout</button>
+    <p class="small muted buybox__fine">
+      Ships tracked, {HANDLING_TEXT}. Sales tax calculated at checkout. US addresses only. Payment by Stripe; we never see your card.
+    </p>
+    <p class="small buybox__error" role="alert" data-buy-error hidden></p>
+  </form>
+
+  <div class="buybox__sold" data-sold-panel hidden={!sold}>
+    <p>This piece has found its new home. <a href={url('/shop')}>See what's available</a> or <a href={url('/wishlist')}>save pieces you love</a> to be first next time.</p>
+  </div>
+
+  <div class="buybox__share cluster">
+    <button type="button" class="btn btn--ghost" data-wishlist-toggle={item.slug} aria-pressed="false">Save to wishlist</button>
+    <button type="button" class="btn btn--ghost" data-share>Share</button>
+  </div>
+</div>
+
+<script>
+  import { initBuyBox } from './buy';
+  document.querySelectorAll<HTMLElement>('[data-buybox]').forEach(initBuyBox);
+</script>
+
+<style>
+  .buybox__title {
+    font-size: var(--fs-2xl);
+    margin-bottom: var(--space-3);
+  }
+  .buybox__price {
+    font-size: var(--fs-lg);
+    margin-bottom: var(--space-5);
+  }
+  .buybox__facts {
+    display: grid;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-5);
+    padding: var(--space-4) 0;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    font-size: var(--fs-sm);
+  }
+  .buybox__facts div {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: var(--space-3);
+  }
+  .buybox__facts dt {
+    color: var(--muted);
+  }
+  .buybox__facts dd {
+    margin: 0;
+  }
+  .buybox__status {
+    margin-bottom: var(--space-4);
+    min-height: 26px;
+  }
+  .buybox__ack {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: var(--space-3);
+    align-items: start;
+    font-size: var(--fs-sm);
+    margin-bottom: var(--space-4);
+    cursor: pointer;
+  }
+  .buybox__ack input {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+  }
+  .buybox__fine {
+    margin-top: var(--space-3);
+  }
+  .buybox__error {
+    color: var(--danger);
+  }
+  .buybox__sold {
+    padding: var(--space-4);
+    background: var(--surface-2);
+    border-radius: var(--radius);
+    margin-bottom: var(--space-4);
+  }
+  .buybox__share {
+    margin-top: var(--space-4);
+  }
+  .buybox__share .btn {
+    min-height: 40px;
+    padding: 0 var(--space-4);
+  }
+</style>

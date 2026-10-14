@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+import { url } from '../lib/api';
+---
+
+<Base title="Checkout cancelled" noindex>
+  <section class="section">
+    <div class="wrap" style="max-width:640px">
+      <h1>No charge was made.</h1>
+      <p>The piece is back on the rail. Pieces here are one of a kind, so if it caught your eye, it may not stay long.</p>
+      <p><a class="btn" href={url('/shop')}>Back to the shop</a></p>
+    </div>
+  </section>
+</Base>

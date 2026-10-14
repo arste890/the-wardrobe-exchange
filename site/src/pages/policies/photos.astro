@@ -1,0 +1,45 @@
+---
+import Policy from '../../layouts/Policy.astro';
+import { CONDITION_LABELS, CONDITION_DESCRIPTIONS } from '@kw/shared/types';
+import type { ConditionGrade } from '@kw/shared/types';
+const grades = Object.keys(CONDITION_LABELS) as ConditionGrade[];
+---
+
+<Policy title="Photo & Condition Disclaimer" description="How our photos are made, what 'Studio rendering' means, and how we grade condition.">
+  <h2>Two kinds of photographs</h2>
+  <p>Every listing uses two clearly labelled kinds of images:</p>
+  <table>
+    <thead><tr><th>Label</th><th>What it is</th><th>What it is for</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Studio rendering</strong></td>
+        <td>An AI-generated image created from photographs of <em>this exact garment</em> to show it on an invisible mannequin or a model in a studio setting.</td>
+        <td>Styling, silhouette and how the piece might look worn. It may smooth texture, even out lighting or omit minor wear. It is <strong>not</strong> a photograph of the item's condition.</td>
+      </tr>
+      <tr>
+        <td><strong>Actual item</strong></td>
+        <td>A photograph of the garment you will receive, adjusted only for exposure and white balance. Backgrounds may be cleaned up; the garment itself is never retouched.</td>
+        <td>Condition, colour, texture, hardware and every disclosed flaw. <strong>These photos govern.</strong></td>
+      </tr>
+    </tbody>
+  </table>
+  <p>If a Studio rendering and an Actual item photo differ, the Actual item photo and the written listing are correct. Models in renderings are not real people and are not wearing the garment.</p>
+
+  <h2>Colour</h2>
+  <p>Colours are photographed in daylight-balanced light and shown without colour grading, but screens vary. Metallic, iridescent and dark fabrics are especially hard to reproduce. A small difference between screen and daylight is not a defect.</p>
+
+  <h2>Condition grades</h2>
+  <table>
+    <thead><tr><th>Grade</th><th>Meaning</th></tr></thead>
+    <tbody>
+      {grades.map((g) => (<tr><td>{CONDITION_LABELS[g]}</td><td>{CONDITION_DESCRIPTIONS[g]}</td></tr>))}
+    </tbody>
+  </table>
+  <p>Any flaw we find is listed in the "Flaws, honestly" section of the listing and, where visible, photographed up close. Normal signs of a garment having been owned — faint creasing from storage, softening of leather, a slightly relaxed knit — are part of a pre-owned piece and are not flaws unless listed.</p>
+
+  <h2>Measurements</h2>
+  <p>Every listing shows the size printed on the garment's label. Where we also list flat measurements, they are taken with the garment laid flat, in centimetres and converted to inches, with a tolerance of ±1 cm; chest is pit to pit and waist is measured flat across the top of the waistband (double it for the full circumference). Not every listing includes measurements — if you need a specific one before buying, email us and we will take it for you. Size labels vary widely between brands and eras, so compare with a garment you own where you can.</p>
+
+  <h2>Why we do this</h2>
+  <p>Renderings let you see a piece styled the way a brand would present it. Actual item photos let you judge it like you would in a shop. Showing both, labelled, is how we keep selling pre-owned clothes honest.</p>
+</Policy>

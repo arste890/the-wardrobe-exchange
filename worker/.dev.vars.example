@@ -1,0 +1,28 @@
+# Copy to worker/.dev.vars for local development (never commit .dev.vars).
+# Production values are set with `wrangler secret put NAME`.
+
+# Stripe TEST keys from https://dashboard.stripe.com/test/apikeys
+STRIPE_SECRET_KEY=sk_test_...
+# From `stripe listen --forward-to localhost:8787/webhooks/stripe` (local) or the Dashboard webhook (prod)
+STRIPE_WEBHOOK_SECRET=whsec_...
+
+# Generate with: npm run hash-password -w worker -- "your password"
+ADMIN_PASSWORD_HASH=pbkdf2$...
+# Any long random string: openssl rand -base64 48
+SESSION_SECRET=change-me
+# 32 random bytes, base64: openssl rand -base64 32  (encrypts marketplace refresh tokens)
+CRED_KEY=change-me
+
+# Email (https://resend.com). Leave empty locally to log emails instead of sending.
+RESEND_API_KEY=
+EMAIL_FROM=The Wardrobe Exchange <orders@thewardrobeexchange.shop>
+SELLER_EMAIL=you@example.com
+
+# GitHub fine-grained token with Contents: read/write on the site repo (triggers Pages rebuilds).
+GITHUB_TOKEN=
+
+# eBay (M3). Leave empty until the developer account exists.
+EBAY_ENV=sandbox
+EBAY_CLIENT_ID=
+EBAY_CLIENT_SECRET=
+EBAY_RU_NAME=

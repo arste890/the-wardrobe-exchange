@@ -1,0 +1,12 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@kw/shared/*": ["../shared/*"]
+    },
+    "lib": ["ES2023", "DOM", "DOM.Iterable"]
+  },
+  "include": ["src/**/*", "../shared/**/*.ts", ".astro/types.d.ts"],
+  "exclude": ["dist"]
+}

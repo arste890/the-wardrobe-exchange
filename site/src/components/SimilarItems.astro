@@ -1,0 +1,19 @@
+---
+import type { CatalogItem } from '@kw/shared/types';
+import ProductCard from './ProductCard.astro';
+
+interface Props {
+  items: CatalogItem[];
+  title?: string;
+}
+const { items, title = 'You may also like' } = Astro.props;
+---
+
+{
+  items.length > 0 && (
+    <section class="section similar">
+      <h2>{title}</h2>
+      <div class="grid">{items.map((i) => <ProductCard item={i} />)}</div>
+    </section>
+  )
+}

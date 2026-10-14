@@ -1,0 +1,22 @@
+---
+import Base from './Base.astro';
+import { BRAND } from '@kw/shared/brand';
+
+interface Props {
+  title: string;
+  description: string;
+}
+const { title, description } = Astro.props;
+---
+
+<Base title={title} description={description}>
+  <section class="section">
+    <div class="wrap">
+      <p class="eyebrow">Policies · effective {BRAND.policyEffectiveDate} · version {BRAND.policyVersion}</p>
+      <h1>{title}</h1>
+      <div class="prose">
+        <slot />
+      </div>
+    </div>
+  </section>
+</Base>

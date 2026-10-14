@@ -1,0 +1,50 @@
+---
+import { MEASUREMENT_LABELS } from '@kw/shared/types';
+import { cmToIn } from '../lib/format';
+import { url } from '../lib/api';
+
+interface Props {
+  measurements: Record<string, number | undefined>;
+}
+const { measurements } = Astro.props;
+const rows = Object.entries(measurements).filter(([, v]) => typeof v === 'number') as [string, number][];
+---
+
+{
+  rows.length > 0 && (
+    <section class="measure">
+      <h2>Measurements</h2>
+      <p class="small muted">Taken flat by hand, ±1 cm. Compare with a piece you own — <a href={url('/policies/size-guide')}>how to measure</a>.</p>
+      <table>
+        <thead>
+          <tr><th>Point</th><th>cm</th><th>in</th></tr>
+        </thead>
+        <tbody>
+          {rows.map(([k, v]) => (
+            <tr><td>{MEASUREMENT_LABELS[k] ?? k}</td><td>{v}</td><td>{cmToIn(v)}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </section>
+  )
+}
+
+<style>
+  .measure table {
+    width: 100%;
+    max-width: 480px;
+    border-collapse: collapse;
+    font-size: var(--fs-sm);
+  }
+  .measure th,
+  .measure td {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .measure th:not(:first-child),
+  .measure td:not(:first-child) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+</style>

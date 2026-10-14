@@ -1,0 +1,18 @@
+[project]
+name = "kw-photo-cleanup"
+version = "0.1.0"
+description = "Non-generative photo cleanup for The Wardrobe Exchange listings"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy>=2",
+  "opencv-python-headless>=4.10",
+  "pillow>=11",
+  "pillow-heif>=0.20",
+  "scipy>=1.14",
+  "rembg[cpu]>=2.0.60",
+  "pymatting>=1.1.12",
+  "rawpy>=0.24",
+]
+
+[tool.uv]
+package = false

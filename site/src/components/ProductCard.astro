@@ -1,0 +1,119 @@
+---
+import type { CatalogItem } from '@kw/shared/types';
+import { CONDITION_LABELS } from '@kw/shared/types';
+import { formatUSD } from '../lib/format';
+import { url } from '../lib/api';
+
+interface Props {
+  item: CatalogItem;
+  eager?: boolean;
+}
+const { item, eager = false } = Astro.props;
+const sold = item.status === 'sold';
+const cover = item.cover;
+const hover = item.photos.find((p) => p.kind === 'actual' && p.id !== cover?.id) ?? item.photos.find((p) => p.id !== cover?.id);
+const searchText = [item.brand, item.title, item.category, item.subcategory, item.color, item.material, item.size_label].filter(Boolean).join(' ').toLowerCase();
+---
+
+<a
+  class:list={['card', { 'card--sold': sold }]}
+  href={url(`/item/${item.slug}`)}
+  data-item
+  data-slug={item.slug}
+  data-category={item.category}
+  data-brand={item.brand}
+  data-size={item.size_label}
+  data-price={item.price_cents}
+  data-status={item.status}
+  data-published={item.published_at ?? item.created_at}
+  data-search={searchText}
+>
+  <div class="card__media">
+    {
+      cover ? (
+        <img
+          src={cover.medium}
+          srcset={`${cover.small} 480w, ${cover.medium} 1000w, ${cover.large} 1600w`}
+          sizes="(min-width: 1100px) 25vw, (min-width: 720px) 33vw, 50vw"
+          width={cover.width || 1136}
+          height={cover.height || 1408}
+          alt={cover.alt || `${item.brand} ${item.title}`}
+          loading={eager ? 'eager' : 'lazy'}
+          decoding="async"
+        />
+      ) : (
+        <div class="card__placeholder" aria-hidden="true" />
+      )
+    }
+    {hover && !sold && <img class="card__hover" src={hover.medium} alt="" loading="lazy" decoding="async" aria-hidden="true" />}
+    <div class="card__badges">
+      {sold ? <span class="badge badge--sold">Sold</span> : item.status === 'reserved' ? <span class="badge">In someone's cart</span> : null}
+      {cover?.kind === 'studio' && !sold && <span class="badge badge--light">Studio rendering</span>}
+    </div>
+    <button class="card__wish" type="button" data-wishlist-toggle={item.slug} aria-label="Save to wishlist" aria-pressed="false">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 20.5s-7.5-4.6-7.5-10A4.2 4.2 0 0 1 12 8a4.2 4.2 0 0 1 7.5 2.5c0 5.4-7.5 10-7.5 10Z" /></svg>
+    </button>
+  </div>
+  <div class="card__body">
+    <div class="card__brand">{item.brand}</div>
+    <div class="card__title">{item.title}</div>
+    <div class="card__meta">
+      <span>Size {item.size_label} · {CONDITION_LABELS[item.condition_grade]}</span>
+      <span class="price">
+        {sold ? <span class="muted">Sold</span> : formatUSD(item.price_cents)}
+        {!sold && item.original_price_cents && item.original_price_cents > item.price_cents && <span class="price--was">{formatUSD(item.original_price_cents)}</span>}
+      </span>
+    </div>
+  </div>
+</a>
+
+<style>
+  .card__placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--surface-2), var(--line));
+  }
+  .card__hover {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 0.35s var(--ease);
+  }
+  @media (hover: hover) {
+    .card:hover .card__hover {
+      opacity: 1;
+    }
+  }
+  .card__wish {
+    position: absolute;
+    left: var(--space-3);
+    top: var(--space-3);
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    color: var(--ink);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .card:hover .card__wish,
+  .card__wish[aria-pressed='true'],
+  .card__wish:focus-visible {
+    opacity: 1;
+  }
+  @media (hover: none) {
+    .card__wish {
+      opacity: 1;
+    }
+  }
+  .card__wish[aria-pressed='true'] svg {
+    fill: var(--ink);
+  }
+</style>

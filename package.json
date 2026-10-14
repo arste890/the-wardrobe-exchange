@@ -1,0 +1,24 @@
+{
+  "name": "the-wardrobe-exchange",
+  "private": true,
+  "version": "0.1.0",
+  "description": "The Wardrobe Exchange — luxury resale storefront (GitHub Pages + Cloudflare Worker)",
+  "workspaces": [
+    "shared",
+    "site",
+    "worker"
+  ],
+  "scripts": {
+    "dev:worker": "npm run dev -w worker",
+    "dev:site": "npm run dev -w site",
+    "build:site": "npm run build -w site",
+    "deploy:worker": "npm run deploy -w worker",
+    "migrate:local": "npm run migrate:local -w worker",
+    "migrate:remote": "npm run migrate:remote -w worker",
+    "seed:local": "npm run seed:local -w worker",
+    "typecheck": "npm run typecheck -w worker && npm run check -w site"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

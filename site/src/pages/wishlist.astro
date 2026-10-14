@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+import { url, API_URL } from '../lib/api';
+---
+
+<Base title="Wishlist" noindex>
+  <section class="section">
+    <div class="wrap" data-wishlist-page data-api={API_URL} data-base={import.meta.env.BASE_URL}>
+      <h1>Wishlist</h1>
+      <p class="muted small">Saved on this device only. Pieces are one of a kind — if one sells it stays here marked sold.</p>
+      <div class="grid" data-wishlist-grid></div>
+      <p class="muted" data-wishlist-empty hidden>Nothing saved yet. Tap the heart on any piece to keep it here. <a href={url('/shop')}>Browse the shop</a>.</p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { getWishlist } from '../components/wishlist';
+  const root = document.querySelector<HTMLElement>('[data-wishlist-page]')!;
+  const grid = root.querySelector<HTMLElement>('[data-wishlist-grid]')!;
+  const empty = root.querySelector<HTMLElement>('[data-wishlist-empty]')!;
+  const base = root.dataset.base!.replace(/\/$/, '');
+  const usd = (c: number) => (c / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  const esc = (s: string) => s.replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]!);
+
+  async function render() {
+    const slugs = getWishlist();
+    if (!slugs.length) {
+      grid.innerHTML = '';
+      empty.hidden = false;
+      return;
+    }
+    empty.hidden = true;
+    const cat = await fetch(`${root.dataset.api}/api/catalog`).then((r) => r.json());
+    const items = cat.items.filter((i: any) => slugs.includes(i.slug));
+    grid.innerHTML = items
+      .map(
+        (i: any) => `
+      <a class="card ${i.status === 'sold' ? 'card--sold' : ''}" href="${base}/item/${i.slug}">
+        <div class="card__media">${i.cover ? `<img src="${i.cover.medium}" alt="${esc(i.cover.alt)}" loading="lazy">` : ''}
+          <div class="card__badges">${i.status === 'sold' ? '<span class="badge badge--sold">Sold</span>' : ''}</div>
+          <button class="card__wish" type="button" data-wishlist-toggle="${i.slug}" aria-pressed="true" aria-label="Remove from wishlist">×</button>
+        </div>
+        <div class="card__body"><div class="card__brand">${esc(i.brand)}</div><div class="card__title">${esc(i.title)}</div>
+        <div class="card__meta"><span>Size ${esc(i.size_label)}</span><span class="price">${i.status === 'sold' ? 'Sold' : usd(i.price_cents)}</span></div></div>
+      </a>`,
+      )
+      .join('');
+  }
+  document.addEventListener('kw:wishlist', render);
+  render();
+</script>
+
+<style>
+  [data-wishlist-grid] :global(.card__wish) {
+    opacity: 1;
+    font-size: 20px;
+  }
+</style>

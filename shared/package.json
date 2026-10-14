@@ -1,0 +1,11 @@
+{
+  "name": "@kw/shared",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    "./types": "./types.ts",
+    "./shipping": "./shipping.ts",
+    "./brand": "./brand.ts"
+  }
+}

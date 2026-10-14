@@ -1,0 +1,241 @@
+---
+import type { PhotoSrc } from '@kw/shared/types';
+import { url } from '../lib/api';
+
+interface Props {
+  photos: PhotoSrc[];
+  title: string;
+  sold?: boolean;
+}
+const { photos, title, sold = false } = Astro.props;
+const ordered = [...photos.filter((p) => p.kind === 'studio'), ...photos.filter((p) => p.kind === 'actual'), ...photos.filter((p) => p.kind === 'flaw')];
+const first = ordered.find((p) => p.is_cover) ?? ordered[0];
+const hasStudio = ordered.some((p) => p.kind === 'studio');
+const hasActual = ordered.some((p) => p.kind === 'actual' || p.kind === 'flaw');
+const label = (k: string) => (k === 'studio' ? 'Studio rendering' : k === 'flaw' ? 'Actual item · detail' : 'Actual item');
+---
+
+<div class="gallery" data-gallery>
+  <div class="gallery__main">
+    {
+      first ? (
+        <button class="gallery__zoom" type="button" data-gallery-open aria-label="Open full-size photo">
+          <img
+            data-gallery-main
+            src={first.large}
+            srcset={`${first.medium} 1000w, ${first.large} 1600w`}
+            sizes="(min-width: 960px) 60vw, 100vw"
+            width={first.width || 1136}
+            height={first.height || 1408}
+            alt={first.alt || title}
+            fetchpriority="high"
+            decoding="async"
+          />
+        </button>
+      ) : (
+        <div class="gallery__empty">Photos coming soon</div>
+      )
+    }
+    <div class="gallery__badges">
+      <span class="badge" data-gallery-kind>{first ? label(first.kind) : ''}</span>
+      {sold && <span class="badge badge--sold">Sold</span>}
+    </div>
+    {
+      hasStudio && hasActual && (
+        <div class="gallery__toggle" role="group" aria-label="Photo type">
+          <button type="button" class="is-active" data-gallery-filter="all">All</button>
+          <button type="button" data-gallery-filter="studio">Studio</button>
+          <button type="button" data-gallery-filter="actual">Actual item</button>
+        </div>
+      )
+    }
+  </div>
+  <ul class="gallery__thumbs" aria-label="Photos">
+    {
+      ordered.map((p, i) => (
+        <li data-kind={p.kind === 'flaw' ? 'actual' : p.kind}>
+          <button
+            type="button"
+            class:list={['gallery__thumb', { 'is-active': p.id === first?.id }]}
+            data-gallery-thumb
+            data-large={p.large}
+            data-medium={p.medium}
+            data-kind-label={label(p.kind)}
+            data-alt={p.alt || title}
+            aria-label={`${label(p.kind)}, photo ${i + 1} of ${ordered.length}`}
+            aria-current={p.id === first?.id ? 'true' : undefined}
+          >
+            <img src={p.small} width={p.width || 1136} height={p.height || 1408} alt="" loading="lazy" decoding="async" />
+            {p.kind === 'flaw' && <span class="gallery__flagtag">detail</span>}
+          </button>
+        </li>
+      ))
+    }
+  </ul>
+  <p class="small muted gallery__note">
+    <strong>Studio rendering</strong> images are AI-generated from photos of this exact piece and show styling only. <strong>Actual item</strong> photos govern condition and color.
+    <a href={url('/policies/photos')}>Read the photo disclaimer.</a>
+  </p>
+
+  <dialog class="lightbox" data-lightbox>
+    <button type="button" class="lightbox__close" data-lightbox-close aria-label="Close">×</button>
+    <img data-lightbox-img src="" alt="" />
+    <p class="lightbox__caption" data-lightbox-caption></p>
+  </dialog>
+</div>
+
+<script>
+  import { initGallery } from './gallery';
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach(initGallery);
+</script>
+
+<style>
+  .gallery {
+    display: grid;
+    gap: var(--space-3);
+  }
+  .gallery__main {
+    position: relative;
+    aspect-ratio: 4 / 5;
+    background: var(--surface-2);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+  .gallery__zoom {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+  }
+  .gallery__zoom img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .gallery__empty {
+    display: grid;
+    place-items: center;
+    height: 100%;
+    color: var(--muted);
+  }
+  .gallery__badges {
+    position: absolute;
+    left: var(--space-3);
+    top: var(--space-3);
+    display: flex;
+    gap: 6px;
+    pointer-events: none;
+  }
+  .gallery__toggle {
+    position: absolute;
+    right: var(--space-3);
+    bottom: var(--space-3);
+    display: flex;
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: var(--radius-pill);
+    padding: 3px;
+    backdrop-filter: blur(4px);
+  }
+  .gallery__toggle button {
+    border: 0;
+    background: none;
+    padding: 6px 12px;
+    border-radius: var(--radius-pill);
+    font-size: var(--fs-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    color: var(--ink);
+  }
+  .gallery__toggle button.is-active {
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .gallery__thumbs {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+    gap: var(--space-2);
+  }
+  .gallery__thumbs li[hidden] {
+    display: none;
+  }
+  .gallery__thumb {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    padding: 0;
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    background: var(--surface-2);
+    overflow: hidden;
+    cursor: pointer;
+  }
+  .gallery__thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .gallery__thumb.is-active {
+    border-color: var(--ink);
+  }
+  .gallery__flagtag {
+    position: absolute;
+    left: 4px;
+    bottom: 4px;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    background: rgba(31, 27, 23, 0.75);
+    color: #fff;
+    padding: 1px 5px;
+    border-radius: var(--radius-pill);
+  }
+  .gallery__note {
+    margin: 0;
+  }
+  .lightbox {
+    border: 0;
+    padding: 0;
+    background: var(--ink);
+    color: var(--paper);
+    width: 100vw;
+    height: 100vh;
+    max-width: 100vw;
+    max-height: 100vh;
+  }
+  .lightbox::backdrop {
+    background: rgba(0, 0, 0, 0.9);
+  }
+  .lightbox img {
+    width: 100%;
+    height: calc(100% - 44px);
+    object-fit: contain;
+  }
+  .lightbox__caption {
+    margin: 0;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    font-size: var(--fs-sm);
+  }
+  .lightbox__close {
+    position: absolute;
+    right: 12px;
+    top: 8px;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    font-size: 26px;
+    cursor: pointer;
+  }
+</style>

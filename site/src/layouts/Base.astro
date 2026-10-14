@@ -1,0 +1,205 @@
+---
+import '../styles/global.css';
+import { BRAND } from '@kw/shared/brand';
+import { HANDLING_TEXT } from '@kw/shared/shipping';
+import { url, SITE_URL } from '../lib/api';
+import Newsletter from '../components/Newsletter.astro';
+
+interface Props {
+  title: string;
+  description?: string;
+  ogImage?: string;
+  ogType?: string;
+  canonical?: string;
+  noindex?: boolean;
+  jsonLd?: unknown[];
+  extraMeta?: { property?: string; name?: string; content: string }[];
+}
+
+const { title, description = BRAND.description, ogImage, ogType = 'website', canonical, noindex = false, jsonLd = [], extraMeta = [] } = Astro.props;
+const fullTitle = title === BRAND.name ? title : `${title} — ${BRAND.name}`;
+const canonicalUrl = canonical ?? new URL(Astro.url.pathname, SITE_URL).toString();
+const og = ogImage ?? `${SITE_URL}${url('/og-default.jpg')}`;
+const year = new Date().getFullYear();
+---
+
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+    <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+    <link rel="sitemap" href={url('/sitemap-index.xml')} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:site_name" content={BRAND.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={og} />
+    <meta name="twitter:card" content="summary_large_image" />
+    {extraMeta.map((m) => <meta {...m} />)}
+    <meta name="theme-color" content="#f7f4ef" />
+    {jsonLd.map((j) => <script type="application/ld+json" set:html={JSON.stringify(j)} />)}
+    <script is:inline>
+      // Hide the hero-less class flicker for wishlist counts etc. before hydration.
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-header">
+      <div class="wrap site-header__inner">
+        <a class="brand" href={url('/')} aria-label={`${BRAND.name} home`}>{BRAND.name}</a>
+        <nav class="nav" aria-label="Primary">
+          <a href={url('/shop')}>Shop</a>
+          <a href={url('/shop?status=sold')}>Archive</a>
+          <a href={url('/policies/size-guide')}>Size guide</a>
+          <a href={url('/wishlist')} class="nav__wishlist">Wishlist <span data-wishlist-count hidden></span></a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <div class="site-footer__grid">
+          <div>
+            <p class="eyebrow">Promise</p>
+            <ul class="site-footer__trust">
+              <li>One of each. Nothing is restocked.</li>
+              <li>Every flaw photographed, nothing hidden.</li>
+              <li>Tracked shipping, {HANDLING_TEXT}.</li>
+              <li>Secure checkout by Stripe. We never see your card.</li>
+            </ul>
+          </div>
+          <div>
+            <p class="eyebrow">Policies</p>
+            <ul>
+              <li><a href={url('/policies/terms')}>Terms of sale (all sales final)</a></li>
+              <li><a href={url('/policies/shipping')}>Shipping</a></li>
+              <li><a href={url('/policies/photos')}>Photo &amp; condition disclaimer</a></li>
+              <li><a href={url('/policies/privacy')}>Privacy</a></li>
+              <li><a href={url('/policies/accessibility')}>Accessibility</a></li>
+              <li><a href={url('/policies/contact')}>Contact</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="eyebrow">New arrivals first</p>
+            <Newsletter />
+            <p class="small muted">
+              <a href={`https://www.instagram.com/${BRAND.social.instagram}`} rel="me noopener" target="_blank">Instagram</a>
+            </p>
+          </div>
+        </div>
+        <p class="small muted site-footer__legal">
+          © {year} {BRAND.name}. Independent seller, {BRAND.seller.city}, {BRAND.seller.state}. Not affiliated with or endorsed by any brand named on this site; brand names identify the garments only.
+        </p>
+      </div>
+    </footer>
+    <script>
+      import { initWishlistBadge } from '../components/wishlist';
+      initWishlistBadge();
+    </script>
+  </body>
+</html>
+
+<style>
+  .skip {
+    position: absolute;
+    left: -999px;
+    top: 8px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 8px 12px;
+    z-index: 100;
+  }
+  .skip:focus {
+    left: 8px;
+  }
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: color-mix(in srgb, var(--paper) 88%, transparent);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: 64px;
+  }
+  .brand {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    letter-spacing: 0.02em;
+  }
+  .brand:hover {
+    text-decoration: none;
+  }
+  .nav {
+    display: flex;
+    gap: clamp(12px, 3vw, 28px);
+    font-size: var(--fs-sm);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .nav__wishlist span {
+    display: inline-block;
+    min-width: 18px;
+    padding: 0 5px;
+    border-radius: var(--radius-pill);
+    background: var(--ink);
+    color: var(--paper);
+    font-size: 11px;
+    text-align: center;
+  }
+  @media (max-width: 560px) {
+    .nav a:nth-child(3) {
+      display: none;
+    }
+  }
+  .site-footer {
+    margin-top: var(--space-9);
+    padding: var(--space-8) 0 var(--space-6);
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+    font-size: var(--fs-sm);
+  }
+  .site-footer__grid {
+    display: grid;
+    gap: var(--space-6);
+    grid-template-columns: 1fr;
+  }
+  @media (min-width: 760px) {
+    .site-footer__grid {
+      grid-template-columns: 1.2fr 1fr 1.2fr;
+      gap: var(--space-8);
+    }
+  }
+  .site-footer ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .site-footer li {
+    margin-bottom: var(--space-2);
+  }
+  .site-footer__trust li::before {
+    content: '— ';
+    color: var(--muted);
+  }
+  .site-footer__legal {
+    margin-top: var(--space-7);
+    max-width: 70ch;
+  }
+</style>

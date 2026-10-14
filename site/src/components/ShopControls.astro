@@ -1,0 +1,93 @@
+---
+import { CATEGORY_LABELS } from '@kw/shared/types';
+import type { Category } from '@kw/shared/types';
+
+interface Props {
+  brands: string[];
+  sizes: string[];
+  categories: Category[];
+}
+const { brands, sizes, categories } = Astro.props;
+---
+
+<div class="controls" data-shop-controls>
+  <label class="controls__search">
+    <span class="visually-hidden">Search</span>
+    <input class="input" type="search" placeholder="Search brand, piece, color…" data-filter="search" autocomplete="off" />
+  </label>
+  <div class="controls__row">
+    <label>
+      <span class="visually-hidden">Category</span>
+      <select class="select" data-filter="category">
+        <option value="">All categories</option>
+        {categories.map((c) => <option value={c}>{CATEGORY_LABELS[c]}</option>)}
+      </select>
+    </label>
+    <label>
+      <span class="visually-hidden">Size</span>
+      <select class="select" data-filter="size">
+        <option value="">All sizes</option>
+        {sizes.map((s) => <option value={s}>{s}</option>)}
+      </select>
+    </label>
+    <label>
+      <span class="visually-hidden">Brand</span>
+      <select class="select" data-filter="brand">
+        <option value="">All brands</option>
+        {brands.map((b) => <option value={b}>{b}</option>)}
+      </select>
+    </label>
+    <label>
+      <span class="visually-hidden">Price</span>
+      <select class="select" data-filter="price">
+        <option value="">Any price</option>
+        <option value="0-15000">Under $150</option>
+        <option value="15000-40000">$150 – $400</option>
+        <option value="40000-100000">$400 – $1,000</option>
+        <option value="100000-">$1,000 +</option>
+      </select>
+    </label>
+    <label>
+      <span class="visually-hidden">Sort</span>
+      <select class="select" data-filter="sort">
+        <option value="new">Newest</option>
+        <option value="price-asc">Price: low to high</option>
+        <option value="price-desc">Price: high to low</option>
+      </select>
+    </label>
+    <label class="controls__check">
+      <input type="checkbox" data-filter="sold" /> Show sold
+    </label>
+  </div>
+  <p class="small muted" data-result-count aria-live="polite"></p>
+</div>
+
+<script>
+  import { initShop } from './shop';
+  initShop();
+</script>
+
+<style>
+  .controls {
+    display: grid;
+    gap: var(--space-3);
+    margin-bottom: var(--space-6);
+  }
+  .controls__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    align-items: center;
+  }
+  .controls__row .select {
+    width: auto;
+    min-width: 140px;
+  }
+  .controls__check {
+    font-size: var(--fs-sm);
+    display: inline-flex;
+    gap: 6px;
+    align-items: center;
+    margin-left: auto;
+  }
+</style>

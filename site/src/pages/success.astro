@@ -1,0 +1,71 @@
+---
+import Base from '../layouts/Base.astro';
+import { BRAND } from '@kw/shared/brand';
+import { HANDLING_TEXT } from '@kw/shared/shipping';
+import { url, API_URL } from '../lib/api';
+---
+
+<Base title="Thank you" noindex>
+  <section class="section">
+    <div class="wrap success" data-success data-api={API_URL}>
+      <p class="eyebrow">Order confirmed</p>
+      <h1>Thank you — it's yours.</h1>
+      <p class="callout callout--strong"><strong>All sales are final.</strong> This purchase is not eligible for return, refund or exchange, except if the item arrives materially different from its listing (see the <a href={url('/policies/terms')} style="color:inherit">Terms of Sale</a>).</p>
+      <div class="success__summary" data-summary>
+        <p class="muted">Loading your order…</p>
+      </div>
+      <p>A receipt from Stripe is on its way to your inbox. Your piece ships {HANDLING_TEXT}, and you'll get a second email with tracking the moment it leaves.</p>
+      <p>Questions? Reply to the receipt or write to <a href={`mailto:${BRAND.seller.email}`}>{BRAND.seller.email}</a>.</p>
+      <p><a class="btn btn--ghost" href={url('/shop')}>Continue browsing</a></p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-success]')!;
+  const out = root.querySelector<HTMLElement>('[data-summary]')!;
+  const id = new URLSearchParams(location.search).get('session_id');
+  const usd = (c: number) => (c / 100).toLocaleString('en-US', { style: 'currency', currency: 'USD' });
+  if (!id) out.innerHTML = '<p class="muted">No order reference found.</p>';
+  else {
+    fetch(`${root.dataset.api}/checkout/session/${encodeURIComponent(id)}`)
+      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
+      .then((s) => {
+        const item = s.item ? `${s.item.brand} ${s.item.title} · size ${s.item.size_label} · ${s.item.sku}` : 'Your item';
+        out.innerHTML = `
+          <table class="success__table">
+            <tr><td>${item}</td><td>${usd(s.amount_subtotal)}</td></tr>
+            <tr><td>Shipping</td><td>${usd(s.amount_shipping)}</td></tr>
+            <tr><td>Tax</td><td>${usd(s.amount_tax)}</td></tr>
+            <tr class="success__total"><td>Total</td><td>${usd(s.amount_total)}</td></tr>
+          </table>
+          ${s.email ? `<p class="small muted">Confirmation sent to ${s.email}</p>` : ''}`;
+      })
+      .catch(() => (out.innerHTML = '<p class="muted">Your payment went through; the order summary will be in your Stripe receipt.</p>'));
+  }
+</script>
+
+<style>
+  .success {
+    max-width: 640px;
+  }
+  .success__summary {
+    margin: var(--space-6) 0;
+  }
+  .success :global(.success__table) {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .success :global(.success__table td) {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .success :global(.success__table td:last-child) {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .success :global(.success__total td) {
+    font-weight: 600;
+    border-bottom: 0;
+  }
+</style>

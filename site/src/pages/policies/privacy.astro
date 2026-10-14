@@ -1,0 +1,49 @@
+---
+import Policy from '../../layouts/Policy.astro';
+import { BRAND } from '@kw/shared/brand';
+---
+
+<Policy title="Privacy Policy" description="What we collect when you buy, who processes it, and your rights.">
+  <h2>In short</h2>
+  <p>We collect only what is needed to sell you a garment and send it to you. There are no advertising trackers or analytics cookies on this site.</p>
+
+  <h2>What we collect and why</h2>
+  <table>
+    <thead><tr><th>Data</th><th>When</th><th>Why</th></tr></thead>
+    <tbody>
+      <tr><td>Name, shipping address, email</td><td>At checkout (entered on Stripe's page)</td><td>To ship your order, send confirmation and tracking, and handle any not-as-described claim</td></tr>
+      <tr><td>Payment card details</td><td>At checkout</td><td>Handled entirely by Stripe. We never receive or store card numbers.</td></tr>
+      <tr><td>Order history and the policy version you accepted</td><td>At purchase</td><td>Tax and accounting records; evidence in any payment dispute</td></tr>
+      <tr><td>Email address (newsletter)</td><td>Only if you sign up</td><td>Occasional new-arrival emails. Every email has an unsubscribe link.</td></tr>
+      <tr><td>Wishlist</td><td>When you tap the heart</td><td>Stored only in your browser (localStorage). It never leaves your device.</td></tr>
+      <tr><td>Server logs (IP address, pages requested)</td><td>Automatically</td><td>Security and keeping the site running; retained briefly by our hosting providers</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Who processes it</h2>
+  <ul>
+    <li><strong>Stripe</strong> — payments, sales-tax calculation, receipts (<a href="https://stripe.com/privacy" rel="noopener">Stripe privacy policy</a>).</li>
+    <li><strong>Cloudflare</strong> — our order database, product images and application hosting, located in the United States.</li>
+    <li><strong>GitHub</strong> — hosting for the static pages of this site.</li>
+    <li><strong>Resend</strong> — order confirmation and shipping emails.</li>
+    <li><strong>Buttondown</strong> — newsletter, only if you subscribe.</li>
+    <li><strong>USPS / carriers</strong> — your name and address on the shipping label.</li>
+    <li><strong>eBay</strong> — if you bought through eBay, eBay's privacy policy applies to that order.</li>
+  </ul>
+  <p>We do not sell or rent personal information, and we do not share it with anyone else except where required by law or to defend a payment dispute.</p>
+
+  <h2>Cookies and storage</h2>
+  <p>This site sets no tracking or advertising cookies. It uses browser storage only for functional purposes: your wishlist and, for the store owner, an admin login. Stripe's checkout page sets its own cookies needed for fraud prevention.</p>
+
+  <h2>Retention</h2>
+  <p>Order records are kept for 7 years for tax purposes. Newsletter addresses are deleted when you unsubscribe. Server logs are retained by our providers for a short period.</p>
+
+  <h2>Your rights</h2>
+  <p>You may ask what personal data we hold about you, ask us to correct it, or ask us to delete it (we must keep order records needed for tax and dispute obligations). Email <a href={`mailto:${BRAND.seller.email}`}>{BRAND.seller.email}</a>. We respond within 30 days.</p>
+
+  <h2>Children</h2>
+  <p>This site is not directed to children under 13 and we do not knowingly collect their information.</p>
+
+  <h2>Changes</h2>
+  <p>We will post any changes here with a new effective date.</p>
+</Policy>

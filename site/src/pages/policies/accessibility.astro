@@ -1,0 +1,9 @@
+---
+import Policy from '../../layouts/Policy.astro';
+import { BRAND } from '@kw/shared/brand';
+---
+
+<Policy title="Accessibility" description="Our commitment to an accessible store.">
+  <p>We want everyone to be able to browse and buy here. The site is built to the WCAG 2.1 AA guidelines: semantic HTML, keyboard-operable galleries and forms, text alternatives on every product photograph, sufficient colour contrast, and layouts that work at 200% zoom and on small screens. Checkout is provided by Stripe, which publishes its own accessibility statement.</p>
+  <p>If anything is hard to use with assistive technology, or you need product details in another format, email <a href={`mailto:${BRAND.seller.email}`}>{BRAND.seller.email}</a> and we will help and fix the issue.</p>
+</Policy>
