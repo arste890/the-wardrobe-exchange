@@ -11,7 +11,7 @@ Work top to bottom. Items marked **you** need your accounts or identity; everyth
 - [ ] **you** — Create a **public** repo `arste890/the-wardrobe-exchange` (public is required for free Pages) and push this folder (`git remote add origin … && git push -u origin main`).
 - [ ] Settings → Pages → Source: **GitHub Actions**.
 - [ ] Settings → Secrets and variables → Actions:
-  - Variables: `PUBLIC_API_URL` = your Worker URL (step 2), `PUBLIC_SITE_URL` = `https://arste890.github.io/the-wardrobe-exchange` (later your domain), `GITHUB_PAGES_BASE` = `/the-wardrobe-exchange` (later `/`).
+  - Variables: `PUBLIC_API_URL` = your Worker URL (step 2), `PUBLIC_SITE_URL` = `https://arste890.github.io/the-wardrobe-exchange` (later your domain), `PAGES_BASE` = `/the-wardrobe-exchange` (later `/`).
   - Secrets: `CLOUDFLARE_API_TOKEN` (step 2), `CLOUDFLARE_ACCOUNT_ID`.
 - [ ] **you** — Fine-grained personal access token with *Contents: read & write* on this repo only → Worker secret `GITHUB_TOKEN` (lets the Worker trigger rebuilds when you publish).
 
@@ -46,7 +46,7 @@ Work top to bottom. Items marked **you** need your accounts or identity; everyth
 ## 6. Domain (when you have it)
 - [ ] DNS in Cloudflare: `A @` → 185.199.108.153 / 109.153 / 110.153 / 111.153, `CNAME www` → `arste890.github.io` (DNS-only, not proxied), `CNAME api` → Worker custom domain (Workers → Settings → Domains & Routes → add `api.<domain>`).
 - [ ] GitHub → Settings → Pages → Custom domain = `<domain>`, enforce HTTPS. Add `site/public/CNAME` containing the domain.
-- [ ] GitHub variables: `PUBLIC_SITE_URL` = `https://<domain>`, `GITHUB_PAGES_BASE` = `/`, `PUBLIC_API_URL` = `https://api.<domain>`. `wrangler.toml`: `PUBLIC_SITE_URL`, add the domain to `ALLOWED_ORIGINS`. Update Stripe success/cancel behaviour by redeploying the Worker.
+- [ ] GitHub variables: `PUBLIC_SITE_URL` = `https://<domain>`, `PAGES_BASE` = `/`, `PUBLIC_API_URL` = `https://api.<domain>`. `wrangler.toml`: `PUBLIC_SITE_URL`, add the domain to `ALLOWED_ORIGINS`. Update Stripe success/cancel behaviour by redeploying the Worker.
 
 ## 7. Before the first real sale
 - [ ] Read `/policies/terms`, `/policies/photos`, `/policies/shipping`, `/policies/privacy` once more; bump `policyVersion` + `policyEffectiveDate` in `shared/brand.ts` if you changed anything.

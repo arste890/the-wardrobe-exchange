@@ -3,9 +3,9 @@ import sitemap from '@astrojs/sitemap';
 import { fileURLToPath } from 'node:url';
 
 // PUBLIC_SITE_URL: canonical origin (https://thewardrobeexchange.shop or https://arste890.github.io)
-// GITHUB_PAGES_BASE: "/the-wardrobe-exchange" while on github.io, "/" on the custom domain
+// PAGES_BASE: "/the-wardrobe-exchange" while on github.io, "/" on the custom domain
 const site = process.env.PUBLIC_SITE_URL || 'http://localhost:4321';
-const base = process.env.GITHUB_PAGES_BASE || '/';
+const base = process.env.PAGES_BASE || '/';
 
 export default defineConfig({
   site,
